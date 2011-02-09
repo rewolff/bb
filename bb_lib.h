@@ -1,3 +1,5 @@
+#ifndef BB_LIB_H
+#define BB_LIB_H
 
 // test2 rew.
 
@@ -23,3 +25,4 @@ void bb_setbit (void *p);
 void bb_clrbit (void *p);
 void bb_writebit (void *p, int val);
 
+#endif
