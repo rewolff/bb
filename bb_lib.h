@@ -1,4 +1,5 @@
 
+// test2 rew.
 
 enum bb_types {BB_INVALID = -1,
 	       BB_BYTE, BB_SHORT, BB_INT, BB_FLOAT, BB_BIT};
