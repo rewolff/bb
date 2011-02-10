@@ -1,10 +1,11 @@
 
 #include "bb_lib.h"
-#include <unistd.h>
 #include <fcntl.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
 int main (int argc, char **argv)
 {
@@ -34,12 +35,25 @@ int main (int argc, char **argv)
 
     if (errno == EAGAIN) errno = EWOULDBLOCK; // simplify following code. 
 
-    if ((n < 0) && 
-	(errno == EWOULDBLOCK)) {
-      if (idletime < max)
-	idletime++;
+    if (n < 0) {
+      if (errno == EWOULDBLOCK) {
+	if (idletime < max)
+	  idletime++;
+      } else {
+	perror ("read");
+	// Can we continue??? What will happen next time?
+      }
     } else {
-      idletime = 0; 
+      // n > 0 
+      buf[n] = 0;
+      if (strstr (buf, "bytes from")) {
+	// That seems to be a ping response!
+	idletime = 0; 
+      } else {
+	// possibly a host unreachable or no route to host. 
+	if (idletime < max)
+	  idletime++;
+      }
     }
 
     bb_write_int (v, idletime);
