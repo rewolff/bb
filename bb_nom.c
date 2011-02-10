@@ -16,46 +16,21 @@ void usage (void)
   exit (1);
 }
 
-
-void nom_bit (void *p)
+void nom_int (struct bb_var *p)
 {
-  int val;
+  int t;
 
-  while (scanf ("%d", &val) > 0) {
-    bb_writebit (p, val);
+  while (scanf ("%d", &t) > 0) {
+    bb_write_int (p, t);
   }
 }
 
-
-void nom_byte (volatile unsigned char *p)
+void nom_float (struct bb_var *p)
 {
-  int val;
+  float t;
 
-  while (scanf ("%d", &val) > 0) {
-    *p = val;
-  }
-}
-
-void nom_short (volatile unsigned short *p)
-{
-  int val;
-
-  while (scanf ("%d", &val) > 0) {
-    *p = val;
-  }
-}
-
-void nom_int (volatile unsigned int *p)
-{
-  while (scanf ("%d", p) > 0) {
-    // Nothing!
-  }
-}
-
-void nom_float (volatile float *p)
-{
-  while (scanf ("%f", p) > 0) {
-    // Nothing!
+  while (scanf ("%f", &t) > 0) {
+    bb_write_float (p, t);
   }
 }
 
@@ -76,11 +51,12 @@ int main (int argc, char **argv)
   p = bb_get_ptr (var);
 
   switch (vartype) {
-  case BB_BYTE: nom_byte  (p);break;
-  case BB_SHORT:nom_short (p);break;
+  case BB_BIT: 
+  case BB_BYTE:
+  case BB_SHORT:
   case BB_INT:  nom_int   (p);break;
   case BB_FLOAT:nom_float (p);break;
-  case BB_BIT:  nom_bit   (p);break;
+
   }
 
   exit (0);

@@ -174,44 +174,104 @@ void *bb_get_ptr (char *name)
 
   t = bb_find_var (name);
   if (t->type == BB_BIT)
-    return (void *) t->offset;
-  return bb_baseptr +  t->offset;
+    return NULL;
+  return bb_baseptr + t->offset;
 }
 
 
-int bb_getbitval (void *p)
+struct bb_var *bb_get_handle (char *name)
 {
-  long t;
-  t = (long) p;
+  return bb_find_var (name);
+}
 
+
+int bb_get_bit_val (struct bb_var *v)
+{
+  int t;
+
+  t = v->offset;
   return ((((unsigned char *) bb_baseptr) [t/8]) >> (t%8)) & 1;
 }
 
 
-void bb_setbit (void *p)
+void bb_set_bit (struct bb_var *v)
 {
-  long t;
-  t = (long) p;
+  int t;
 
-  ((unsigned char *) bb_baseptr) [t/8] |=  1 << (t%8);
+  t = v->offset;
+  ((unsigned char *) bb_baseptr) [t/8] |= 0x00 + (1 << (t%8));
 }
 
 
-void bb_clrbit (void *p)
+void bb_clr_bit (struct bb_var *v)
 {
-  long t;
-  t = (long) p;
+  int t;
 
-  ((unsigned char *) bb_baseptr) [t/8] &= 0xff- (1 << (t%8));
+  t = v->offset;
+  ((unsigned char *) bb_baseptr) [t/8] &= 0xff - (1 << (t%8));
 }
 
 
-void bb_writebit (void *p, int val)
+void bb_write_bit (struct bb_var *v, int val)
 {
   if (val)
-    bb_setbit (p);
+    bb_set_bit (v);
   else
-    bb_clrbit (p);
+    bb_clr_bit (v);
+}
+
+
+void bb_write_int (struct bb_var *v, int val)
+{
+  switch (v->type) {
+  case BB_BIT:   bb_write_bit (v, val);break;
+  case BB_BYTE:  *((unsigned char  *) (bb_baseptr+v->offset)) = val;break;
+  case BB_SHORT: *((unsigned short *) (bb_baseptr+v->offset)) = val;break;
+  case BB_INT:   *((unsigned int   *) (bb_baseptr+v->offset)) = val;break;
+  case BB_FLOAT: *((         float *) (bb_baseptr+v->offset)) = val;break;
+  case BB_INVALID:break;
+  }
+}
+
+
+
+void bb_write_float (struct bb_var *v, float val)
+{
+  switch (v->type) {
+  case BB_BIT:   bb_write_bit (v, val);break;
+  case BB_BYTE:  *((unsigned char  *) (bb_baseptr+v->offset)) = val;break;
+  case BB_SHORT: *((unsigned short *) (bb_baseptr+v->offset)) = val;break;
+  case BB_INT:   *((unsigned int   *) (bb_baseptr+v->offset)) = val;break;
+  case BB_FLOAT: *((         float *) (bb_baseptr+v->offset)) = val;break;
+  case BB_INVALID:break;
+  }
+}
+
+
+int bb_get_int (struct bb_var *v)
+{
+  switch (v->type) {
+  case BB_BIT:   return bb_get_bit_val (v);
+  case BB_BYTE:  return *((unsigned char  *) (bb_baseptr+v->offset));
+  case BB_SHORT: return *((unsigned short *) (bb_baseptr+v->offset));
+  case BB_INT:   return *((unsigned int   *) (bb_baseptr+v->offset));
+  case BB_FLOAT: return *((         float *) (bb_baseptr+v->offset));
+  case BB_INVALID:break;
+  }
+  return -1;
+}
+
+float bb_get_float (struct bb_var *v)
+{
+  switch (v->type) {
+  case BB_BIT:   return bb_get_bit_val (v);
+  case BB_BYTE:  return *((unsigned char  *) (bb_baseptr+v->offset));
+  case BB_SHORT: return *((unsigned short *) (bb_baseptr+v->offset));
+  case BB_INT:   return *((unsigned int   *) (bb_baseptr+v->offset));
+  case BB_FLOAT: return *((         float *) (bb_baseptr+v->offset));
+  case BB_INVALID:break;
+  }
+  return -1;
 }
 
 
@@ -237,7 +297,10 @@ void bb_create_var (char *name, int type)
 
 
   fd = bb_open_shm (O_RDWR);
-  ftruncate (fd, firstfree);
+  if (ftruncate (fd, firstfree) < 0) {
+    perror ("ftruncate");
+    exit (1);
+  }
   close (fd);
 }
 
@@ -246,7 +309,6 @@ enum bb_errno bb_overlay_var (char *name, int type, char *where, int offset)
 {
   struct bb_var *t, *w;
   FILE *fp;
-  int fd; 
 
   w = bb_find_var (where);
   if (!w) return BB_ENOTFOUND; 
@@ -263,7 +325,7 @@ enum bb_errno bb_overlay_var (char *name, int type, char *where, int offset)
   varlist = t; 
 
   fp = bb_open_names ("a");
-  fprintf (fp, "%s %x %s\n", 
+  fprintf (fp, "%s %lx %s\n", 
 	   name, t->offset, bb_type_enum_to_string (type));
   fclose (fp);
   return BB_OK;

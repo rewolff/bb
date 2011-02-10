@@ -15,7 +15,7 @@ void usage (void)
 int main (int argc, char **argv)
 {
   int vartype; 
-  void *p;
+  struct bb_var *p;
   char *var, *val;
   int t; 
   float f;
@@ -29,16 +29,16 @@ int main (int argc, char **argv)
   if (!val) usage (); 
  
   vartype = bb_get_type (var);
-  p = bb_get_ptr (var);
+  p = bb_get_handle (var);
 
   sscanf (val, "%d", &t);
   sscanf (val, "%f", &f);
   switch (vartype) {
-  case BB_BYTE:   * (unsigned char  *)p = t;break;
-  case BB_SHORT:  * (unsigned short *)p = t;break;
-  case BB_INT:    * (unsigned int   *)p = t;break;
-  case BB_FLOAT:  * (float          *)p = f;break;
-  case BB_BIT:    bb_writebit (p, t);break;
+  case BB_BYTE:  
+  case BB_SHORT: 
+  case BB_INT:   
+  case BB_BIT:    bb_write_int   (p, t);break;
+  case BB_FLOAT:  bb_write_float (p, f);break;
   }
   exit (0);
 }

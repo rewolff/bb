@@ -1,5 +1,4 @@
 
-// test rew
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,74 +17,36 @@ void usage (void)
 }
 
 
-void mon_bit (volatile unsigned char *p)
+void mon_int (struct bb_var *p)
 {
-  int old = -1;
-
+  int new;
+  int old;
+  
+  old = bb_get_int (p) + 1; // Always different!
   while (1) {
-    if (old != bb_getbitval(p)) {
-      printf ("%d\n", *p);
+    new = bb_get_int (p);
+    if (old != new) {
+      printf ("%d\n", new);
       fflush (stdout); 
-      old = bb_getbitval(p);
-    }
-    usleep (interval);
-  }
-}
-
-void mon_byte (volatile unsigned char *p)
-{
-  int old = -1;
-
-  while (1) {
-    if (old != *p) {
-      printf ("%d\n", *p);
-      fflush (stdout); 
-      old = *p;
+      old = new;
     }
     usleep (interval);
   }
 }
 
 
-void mon_short (volatile unsigned short *p)
+void mon_float (struct bb_var *p)
 {
-  int old = -1;
-
+  float new;
+  float old;
+  
+  old = bb_get_float (p) * 2; // almost always different!
   while (1) {
-    if (old != *p) {
-      printf ("%d\n", *p);
+    new = bb_get_float (p);
+    if (old != new) {
+      printf ("%f\n", new);
       fflush (stdout); 
-      old = *p;
-    }
-    usleep (interval);
-  }
-}
-
-
-void mon_int (volatile unsigned int *p)
-{
-  unsigned int old = -1;
-
-  while (1) {
-    if (old != *p) {
-      printf ("%d\n", *p);
-      fflush (stdout); 
-      old = *p;
-    }
-    usleep (interval);
-  }
-}
-
-
-void mon_float (volatile float *p)
-{
-  float old = -1;
-
-  while (1) {
-    if (old != *p) {
-      printf ("%f\n", *p);
-      fflush (stdout); 
-      old = *p;
+      old = new;
     }
     usleep (interval);
   }
@@ -96,7 +57,7 @@ void mon_float (volatile float *p)
 int main (int argc, char **argv)
 {
   int vartype; 
-  void *p;
+  struct bb_var *p;
   char *var;
 
   bb_init ();
@@ -108,8 +69,9 @@ int main (int argc, char **argv)
   p = bb_get_ptr (var);
 
   switch (vartype) {
-  case BB_BYTE: mon_byte (p);break;
-  case BB_SHORT:mon_short (p);break;
+  case BB_BIT: 
+  case BB_BYTE: 
+  case BB_SHORT:
   case BB_INT:  mon_int (p);break;
   case BB_FLOAT:mon_float (p);break;
   }
