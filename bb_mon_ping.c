@@ -33,10 +33,10 @@ int main (int argc, char **argv)
     n = read (0, buf, 0x100);
     if (n == 0) break;
 
-    if (errno == EAGAIN) errno = EWOULDBLOCK; // simplify following code. 
+    if (errno == EWOULDBLOCK) errno = EAGAIN; // simplify following code. 
 
     if (n < 0) {
-      if (errno == EWOULDBLOCK) {
+      if (errno == EAGAIN) {
 	if (idletime < max)
 	  idletime++;
       } else {
