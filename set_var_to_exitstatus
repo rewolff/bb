@@ -1,0 +1,5 @@
+#!/bin/sh
+var=$1
+shift
+$*
+bb_set $var $?
