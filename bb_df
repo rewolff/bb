@@ -1,0 +1,4 @@
+#!/bin/sh
+var=$1
+filesys=$2
+bb_set $var `df -P $filesys | tail -1 | awk '{print $5 + 0}' `
