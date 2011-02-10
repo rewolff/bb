@@ -66,7 +66,7 @@ int main (int argc, char **argv)
   if (!var) usage (); 
  
   vartype = bb_get_type (var);
-  p = bb_get_ptr (var);
+  p = bb_get_handle (var);
 
   switch (vartype) {
   case BB_BIT: 
