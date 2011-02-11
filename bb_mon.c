@@ -67,6 +67,11 @@ int main (int argc, char **argv)
  
   vartype = bb_get_type (var);
   p = bb_get_handle (var);
+  if (p == NULL)
+  {
+    printf("Variable '%s' not found... Exiting.\n", var);
+    exit(-1);
+  }
 
   switch (vartype) {
   case BB_BIT: 

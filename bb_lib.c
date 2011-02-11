@@ -164,6 +164,11 @@ int bb_get_type (char *name)
   struct bb_var *t;
 
   t = bb_find_var (name);
+  if (t == NULL)
+  {
+    return BB_INVALID;
+  }
+
   return t->type;
 }
 
