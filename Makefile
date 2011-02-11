@@ -5,7 +5,7 @@ CFLAGS=-Wall -O2 -ggdb
 #  --std=c99 -pedantic
 
 EXE=bb_create bb_print bb_set bb_mon bb_nom bb_parport bb_ftdi \
-	bb_xor bb_mon_ping bb_list bb_alarm
+	bb_xor bb_mon_ping bb_list bb_kitt bb_alarm
 
 all:$(EXE)
 
