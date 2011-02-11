@@ -168,6 +168,8 @@ int bb_get_type (char *name)
 }
 
 
+
+
 void *bb_get_ptr (char *name)
 {
   struct bb_var *t;
@@ -333,3 +335,14 @@ enum bb_errno bb_overlay_var (char *name, int type, char *where, int offset)
 
 
 
+struct bb_var *bb_get_next_var(struct bb_var *p)
+{
+  if (p) return p->next;
+  else   return varlist;
+}
+
+
+char *bb_get_name(struct bb_var *p)
+{
+  return p->name;
+}
