@@ -25,6 +25,8 @@ bb_mon_ping: bb_mon_ping.o bb_lib.o
 
 bb_list: bb_list.o bb_lib.o
 
+bb_alarm: bb_alarm.o bb_lib.o
+
 bb_ftdi: bb_ftdi.o
 	$(CC) $< -lftdi -lusb -o $@
 
