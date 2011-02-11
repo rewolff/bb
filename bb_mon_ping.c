@@ -7,6 +7,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+
+void usage (void)
+{
+  fprintf (stderr, "usage error.\n");
+  exit (1);
+}
+
+
 int main (int argc, char **argv)
 {
   char  *varname; 
@@ -18,8 +26,13 @@ int main (int argc, char **argv)
   
 
   varname = argv[1];
+  if (!varname)
+    usage (); 
+
   bb_init (); 
   v = bb_get_handle (varname); 
+  if (!v) 
+    usage ();
 
   // XX Figure out max depending on the type. 
   max = 255; // for now don't increment beyond a byte. 
