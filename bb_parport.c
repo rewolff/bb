@@ -16,13 +16,24 @@ int main (int argc, char **argv)
 
   dev = argv[1];
 
-  fd = open (dev, O_RDWR); 
-  ioctl (fd, PPEXCL, NULL); 
-  ioctl (fd, PPCLAIM, NULL); 
+  fd = open (dev, O_RDWR);
+  if (fd < 0) {
+    perror ("open");
+    exit (0);
+  }
+
+  if (ioctl (fd, PPEXCL, NULL) < 0) {
+    perror ("ioctl PPEXCL");
+  }
+  if (ioctl (fd, PPCLAIM, NULL) < 0) {
+    perror ("ioctl PPCLAIM");
+  }
 
   while (scanf ("%d", &i) > 0) {
     ch = i; 
-    ioctl (fd, PPWDATA, &ch); 
+    if (ioctl (fd, PPWDATA, &ch) < 0) {
+      perror ("ioctl PPWDATA");
+    }
   }
   exit (0);
 }
