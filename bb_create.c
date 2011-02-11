@@ -16,6 +16,7 @@ int main (int argc, char **argv)
   int vartype; 
   char *var;
   char *vartypes;
+  struct bb_var     *p;
 
   bb_init ();
 
@@ -26,6 +27,14 @@ int main (int argc, char **argv)
   if (!vartypes) usage (); 
 
   vartype = bb_typestring_to_enum (vartypes);
+
+  p = bb_get_handle (var);
+  if (p)
+  {
+    printf("Variable %s already exists. Will not create again.\n", var);
+    exit(-1);
+  }
+
 
   bb_create_var (var, vartype);
   exit (0);
