@@ -2,9 +2,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <usb.h>
 #include <ftdi.h>
+#include <getopt.h>
+#include <unistd.h>
+
 
 
 void ftdi_fatal (struct ftdi_context *ftdi, char *str)
