@@ -33,7 +33,7 @@ int main (int argc, char **argv)
   case BB_SHORT:
   case BB_INT:  
   case BB_BIT:   printf ("%d\n", bb_get_int (p));break;
-  case BB_FLOAT: printf ("%f\n", * (float          *)p);break;
+  case BB_FLOAT: printf ("%f\n", bb_get_float (p));break;
   }
   exit (0);
 }
