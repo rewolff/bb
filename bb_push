@@ -1,0 +1,9 @@
+#!/bin/sh
+remsh_prog=ssh
+prefix=`hostname`_
+vars=$*
+remvars=`echo "" $vars | sed -e 's/ / '$prefix'/g'`
+
+#echo vars: $vars
+#echo rvars: $remvars
+bb_mmon $vars | $remsh_prog bb_mnom $remvars
