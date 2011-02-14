@@ -1,5 +1,5 @@
 #!/bin/sh
-remsh_prog=ssh
+remsh=ssh
 prefix=`hostname`_
 host=$1
 shift
