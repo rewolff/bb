@@ -8,4 +8,4 @@ destvars=`echo "" $vars | sed -e 's/ / '$prefix'/g'`
 
 #echo vars: $vars
 #echo destvars: $destvars
-bb_mmon $vars | $remsh_prog $host bb_mnom $destvars
+bb_mmon $vars | $remsh $host bb_mnom $destvars
