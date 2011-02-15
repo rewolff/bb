@@ -17,42 +17,6 @@ void usage (void)
 }
 
 
-void mon_int (struct bb_var *p)
-{
-  int new;
-  int old;
-  
-  old = bb_get_int (p) + 1; // Always different!
-  while (1) {
-    new = bb_get_int (p);
-    if (old != new) {
-      printf ("%d\n", new);
-      fflush (stdout); 
-      old = new;
-    }
-    usleep (interval);
-  }
-}
-
-
-void mon_float (struct bb_var *p)
-{
-  float new;
-  float old;
-  
-  old = bb_get_float (p) * 2; // almost always different!
-  while (1) {
-    new = bb_get_float (p);
-    if (old != new) {
-      printf ("%f\n", new);
-      fflush (stdout); 
-      old = new;
-    }
-    usleep (interval);
-  }
-}
-
-
 void mon_varlist (int nvars, int *vartypes, struct bb_var *vars[])
 {
   int i;
@@ -97,6 +61,7 @@ void mon_varlist (int nvars, int *vartypes, struct bb_var *vars[])
 	}
       }
       printf ("\n");
+      fflush (stdout);
     }
     usleep (interval); 
   }
