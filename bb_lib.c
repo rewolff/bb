@@ -84,6 +84,11 @@ void bb_init_base (void)
   }
 }
 
+char *bb_get_base (void)
+{
+  return bb_base;
+}
+
 
 FILE *bb_open_names (char *mode)
 {

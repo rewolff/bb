@@ -35,4 +35,6 @@ float bb_get_float (struct bb_var *p);
 struct bb_var *bb_get_next_var(struct bb_var *p);
 char *bb_get_name(struct bb_var *p);
 
+char *bb_get_base (void);
+
 #endif
