@@ -1,4 +1,10 @@
 #!/bin/sh
+while true ; do
+   awk '{print $1, $2, $3;}' /proc/loadavg 
+   sleep 1
+done | bb_mnom $1 $2 $3
+exit 0
+
 if [ $# -lt 1 ] ; then
    echo "need a var to transport the load into. "
    exit 1

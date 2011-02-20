@@ -25,7 +25,7 @@ void nom_varlist (int nvars, int *vartypes, struct bb_var *vars[])
   char *buf, *p; 
 
   buf = malloc (nvars * 16); 
-  printf ("Buf=%p\n", buf);
+  // printf ("Buf=%p\n", buf);
   while (fgets (buf, nvars * 16, stdin) ) {
     p = buf; 
     for (i=0;i<nvars;i++) {
