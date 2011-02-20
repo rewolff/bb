@@ -103,8 +103,8 @@ int main (int argc, char **argv)
 #define FLOAT_LOG_DATA ((float *)dataptr)
 #define FLOAT_VAR_PTR  ((float *)vptr) 
 
-  printf ("logptr: %p, dataptr: %p, vptr: %p\n", 
-	  logptr, dataptr, vptr);
+  //printf ("logptr: %p, dataptr: %p, vptr: %p\n", 
+  //	  logptr, dataptr, vptr);
   if (numsamples) {
     // cyclic logging. Use the memory mapped file... 
     while (1) {
