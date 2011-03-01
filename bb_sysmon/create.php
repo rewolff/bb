@@ -6,7 +6,7 @@ $vn = $_GET["varname"];
 $vt = $_GET["vartype"];
 
 
-$cmd = sprintf ("/home/wolff/bb/bb_create %s %s", $vn, $vt);
+$cmd = sprintf ("$BB_BINDIR/bb_create %s %s", $vn, $vt);
 // echo "executing $cmd";
 
 system ($cmd); 

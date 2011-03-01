@@ -5,7 +5,7 @@ require_once 'bb.php';
 
 
 echo "<h1>current list. </h1>\n";
-$fp = popen ("/home/wolff/bb/bb_list", "r");
+$fp = popen ("$BB_BINDIR/bb_list", "r");
 
 
 echo "<table border=1>\n";
@@ -17,7 +17,7 @@ while ($oneline = ltrim (fgets ($fp))) {
   list ($type, $name) = preg_split ("/ /", $oneline);
   //echo "type = $type name = $name";
   echo "<tr><td> $type </td><td> <a href=edit_var.php?varname=$name> $name</a> </td> <td>";
-  system ("/home/wolff/bb/bb_print $name");
+  system ("$BB_BINDIR/bb_print $name");
   echo "</td></tr>\n";
  }
 echo "</table>\n";
