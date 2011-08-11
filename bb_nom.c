@@ -7,8 +7,6 @@
 
 #include "bb_lib.h"
 
-int interval = 100000; // in microseconds. 10x per second.
-
 
 void usage (void)
 {
@@ -39,23 +37,25 @@ void nom_float (struct bb_var *p)
 int main (int argc, char **argv)
 {
   int vartype; 
-  void *p;
-  char *var;
+  char *varn;
+//  void *p;
+  struct bb_var *var;
 
   bb_init ();
 
-  var = argv[1];
-  if (!var) usage (); 
+  varn = argv[1];
+  if (!varn) usage (); 
  
-  vartype = bb_get_type (var);
-  p = bb_get_ptr (var);
+  var = bb_get_handle (varn);
+  vartype = bb_get_type (varn);
+ // p = bb_get_ptr (var);
 
   switch (vartype) {
   case BB_BIT: 
   case BB_BYTE:
   case BB_SHORT:
-  case BB_INT:  nom_int   (p);break;
-  case BB_FLOAT:nom_float (p);break;
+  case BB_INT:  nom_int   (var);break;
+  case BB_FLOAT:nom_float (var);break;
 
   }
 
