@@ -1,0 +1,8 @@
+CONFIG += qt debug
+
+SOURCES += main.cpp
+SOURCES += bb_mon.cpp
+
+HEADERS += bb_mon.h
+
+
