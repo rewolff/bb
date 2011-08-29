@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <math.h>
 
 
 #include "bb_lib.h"
@@ -40,7 +41,8 @@ void mon_float (struct bb_var *p)
   float new;
   float old;
   
-  old = bb_get_float (p) * 2; // almost always different!
+  old = NAN;
+//  bb_get_float (p) * 2; // almost always different!
   while (1) {
     new = bb_get_float (p);
     if (old != new) {
