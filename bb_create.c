@@ -4,9 +4,11 @@
 
 #include "bb_lib.h"
 
+static char *progname;
+
 void usage (void)
 {
-  fprintf (stderr, "usage error.\n");
+  fprintf (stderr, "usage: %s <varname> <type>.\n", progname);
   exit (1);
 }
 
@@ -18,6 +20,7 @@ int main (int argc, char **argv)
   char *vartypes;
   struct bb_var     *p;
 
+  progname = argv[0];
   bb_init ();
 
   var = argv[1];

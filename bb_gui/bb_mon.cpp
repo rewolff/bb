@@ -16,7 +16,6 @@
 #include "bb_mon.h"
 
 
-
 void bb_mon_bool::data_available (void)
 {
   char data[0x100]; 
@@ -66,8 +65,6 @@ void bb_mon_bool::setValue (int ival)
   emit valueChanged (val);
 }
 
-
-
 void bb_mon_int::data_available (void)
 {
   char data[0x100]; 
@@ -104,7 +101,7 @@ bb_mon_int::bb_mon_int (QWidget *parent, const QString &name)
 
 void bb_mon_int::setValue (int val)
 {
-  char *buf; 
+  char buf[0x100]; 
 
   if (val == m_value) return;
 
