@@ -67,6 +67,7 @@ int main (int argc, char **argv)
 	oldvals[i] = v;
       }
     }
+    usleep (100000);
   }
 
   exit (0);
