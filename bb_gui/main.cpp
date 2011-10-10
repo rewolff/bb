@@ -12,9 +12,10 @@
 
 #include <stdio.h>
 
-#include <QProcess>
+//#include <QProcess>
 
-#include "bb_mon.h"
+//#include "bb_mon.h"
+#include "bb_checkbox.h"
 
 
 
@@ -44,8 +45,6 @@ int main (int argc, char **argv)
   spinbox->move(100, 190);
   spinbox->show();
 
-  
-
   QObject::connect(BB_mon, SIGNAL(valueChanged(bool)),
 		   checkbox, SLOT(setChecked(bool)));
 
@@ -57,7 +56,10 @@ int main (int argc, char **argv)
   QObject::connect(spinbox, SIGNAL(valueChanged(int)),
 		   slider, SLOT(setValue(int)));
 
+
+  bb_checkbox *bb_cb7 = new bb_checkbox (window, "led7", 100,50);
+  bb_checkbox *bb_cb6 = new bb_checkbox (window, "led6", 100,70);
+
   app.exec();
-  printf ("exec done\n");
   exit (0);
 }

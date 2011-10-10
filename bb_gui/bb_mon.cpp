@@ -57,8 +57,11 @@ void bb_mon_bool::setValue (int ival)
   bool val;
 
   val = (bool) ival;
+  printf ("monbool: setvalue: %d -> %d)", m_value, ival);
+
   //printf ("setvalue called %d %d.\n", m_value,  val);
   if (val == m_value) return;
+
 
   m_value = val;
   setProcess->write (val?"1\n":"0\n");
@@ -105,6 +108,7 @@ void bb_mon_int::setValue (int val)
 
   if (val == m_value) return;
 
+  printf ("monint: setvalue: %d", val);
   m_value = val;
   sprintf (buf, "%d\n", val);
   setProcess->write (buf);
