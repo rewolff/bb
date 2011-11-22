@@ -11,6 +11,10 @@ enum bb_errno {BB_OK = 0,
 // Struct bb_var should be opague: It is not defined HERE!. 
 // struct bb_var; 
 
+#ifdef  __cplusplus
+extern "C" {
+#endif
+
 enum bb_types bb_typestring_to_enum (char *s);
 char * bb_type_enum_to_string (enum bb_types t);
 
@@ -36,5 +40,9 @@ struct bb_var *bb_get_next_var(struct bb_var *p);
 char *bb_get_name(struct bb_var *p);
 
 char *bb_get_base (void);
+
+#ifdef  __cplusplus
+}
+#endif
 
 #endif

@@ -6,4 +6,5 @@ SOURCES += bb_checkbox.cpp
 
 HEADERS += bb_mon.h
 
+LIBS += ../bb_lib.o -Llaksfdkasjdf
 

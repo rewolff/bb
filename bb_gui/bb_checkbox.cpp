@@ -27,7 +27,6 @@ bb_checkbox::bb_checkbox (QWidget *parent, const QString &name, int x, int y)
   checkbox->move(x, y);
   checkbox->show();
 
-
   QObject::connect(BB_mon, SIGNAL(valueChanged(bool)),
 		   checkbox, SLOT(setChecked(bool)));
 
@@ -36,8 +35,6 @@ bb_checkbox::bb_checkbox (QWidget *parent, const QString &name, int x, int y)
 
   QObject::connect(checkbox, SIGNAL(stateChanged(int)),
 		   this,     SLOT(setValue(int)));
-
-
 }
 
 
@@ -55,6 +52,5 @@ void bb_checkbox::setValue (int ival)
   BB_mon->setValue (ival);
   checkbox->setChecked (val);
 }
-
 
 
