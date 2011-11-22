@@ -12,9 +12,10 @@
 
 #include <stdio.h>
 
-#include <QProcess>
+//#include <QProcess>
 
-#include "bb_mon.h"
+//#include "bb_mon.h"
+#include "bb_checkbox.h"
 
 
 
@@ -31,10 +32,11 @@ int main (int argc, char **argv)
   QRadioButton *button = new QRadioButton("Press me", window);
   button->move(100, 100);
   button->show();
-
+#if 0
   QCheckBox *checkbox = new QCheckBox("Press me too", window);
   checkbox->move(100, 130);
   checkbox->show();
+#endif
 
   QSlider *slider = new QSlider(Qt::Horizontal,window);
   slider->move(100, 160);
@@ -44,8 +46,7 @@ int main (int argc, char **argv)
   spinbox->move(100, 190);
   spinbox->show();
 
-  
-
+#if 0
   QObject::connect(BB_mon, SIGNAL(valueChanged(bool)),
 		   checkbox, SLOT(setChecked(bool)));
 
@@ -56,8 +57,12 @@ int main (int argc, char **argv)
 		   spinbox, SLOT(setValue(int)));
   QObject::connect(spinbox, SIGNAL(valueChanged(int)),
 		   slider, SLOT(setValue(int)));
+#endif
+
+  bb_checkbox *bb_cb7 = new bb_checkbox (window, "led7", 100,50);
+  bb_checkbox *bb_cb6 = new bb_checkbox (window, "led6", 100,70);
+  bb_checkbox *bb_cb8 = new bb_checkbox (window, "testbitje", 100,130);
 
   app.exec();
-  printf ("exec done\n");
   exit (0);
 }

@@ -2,6 +2,7 @@ CONFIG += qt debug
 
 SOURCES += main.cpp
 SOURCES += bb_mon.cpp
+SOURCES += bb_checkbox.cpp
 
 HEADERS += bb_mon.h
 
