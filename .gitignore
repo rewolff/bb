@@ -16,3 +16,4 @@ bb_print
 bb_printlog
 bb_set
 bb_xor
+bb_remote
