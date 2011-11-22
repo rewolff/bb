@@ -17,41 +17,50 @@
 //#include "bb_mon.h"
 #include "bb_checkbox.h"
 
-int parse_file (QWidget *window, char *fname)
+void parse_file (QWidget *window, char *fname, int *maxx, int *maxy)
 {
   FILE *f;
   char buf[1024];
   char command[0x40], arg[0x40];
-  int pos = 30;
+  int posx = 20;
+  int posy = 20;
 
   f = fopen (fname, "r");
   while (fgets (buf, 1024, f)) {
      if (buf [0] == '#') continue;
      sscanf (buf, "%s %s", command, arg);
      if (strcmp (command, "checkbox") == 0) {
-        bb_checkbox *bla = new bb_checkbox (window, arg, 20, pos);
-        pos += 20; 
+        bb_checkbox *bla = new bb_checkbox (window, arg, posx, posy);
+        posy += 20; 
      } else {
        printf ("syntax error in config file.\n");
        exit (1);
      }   
+     if (posy > *maxy) *maxy = posy;
+     if (posy > 400) {
+	posx += 120;
+        posy = 20;
+     }
+     if (posx > *maxx) *maxx = posx;
+
   }
-  return pos;
+  return;
 }
 
 
 int main (int argc, char **argv)
 {
   QApplication app(argc, argv);
-  int endpos; 
+  int maxx, maxy;
 
   QWidget *window = new QWidget();
 
-  endpos = 20;
+  maxx = 0;
+  maxy = 0;
   if (argc > 1) 
-      endpos = parse_file (window, argv[1]);
+      parse_file (window, argv[1], &maxx, &maxy);
 
-  window->resize(320, endpos+30);
+  window->resize(maxx+120, maxy+30);
   window->show();
 
 #if 0
