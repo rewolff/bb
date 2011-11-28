@@ -10,19 +10,7 @@
 
 
 #include "bb_lib.h"
-
-#define BB_LOGFILE_MAGIC (*((int *)"BBLF"))
-
-
-struct logfile_header {
-  int magic;
-  int datastart;
-  int hdrversion;
-  int dt;
-  int numsamples;
-  int curpos;
-  char pad[0x200 - 0x18];
-};
+#include "bb_logs.h"
 
 
 void fatal (char *s)
@@ -30,7 +18,6 @@ void fatal (char *s)
   fprintf (stderr, "%s\n", s);
   exit (0);
 }
-
 
 
 int main (int argc, char **argv)
@@ -46,13 +33,13 @@ int main (int argc, char **argv)
   long long fsize;
   struct stat statb;
   
-
   bb_init ();
 
+  if (argc <= 1) {
+    fprintf(stderr, "usage: bb_printlog varname\n");
+    exit (1);
+  }
   varname = argv[1];
-
-  // vh = bb_get_handle (varname); 
-  // vptr = bb_get_ptr (varname);
 
   type = bb_get_type (varname);
   tsize = bb_typesize (type);
