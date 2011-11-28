@@ -6,7 +6,8 @@ CFLAGS=-Wall -O2 -ggdb
 
 EXE=bb_create bb_print bb_set bb_mon bb_nom bb_parport bb_ftdi \
 	bb_xor bb_mon_ping bb_list bb_kitt bb_alarm bb_mmon \
-	bb_mnom bb_log bb_printlog bb_remote bb_vmstat
+	bb_mnom bb_log bb_printlog bb_remote bb_vmstat \
+	bb_createlog
 SCRIPTS=bb_df bb_sysload set_var_to_exitstatus
 
 all:$(EXE)
@@ -34,6 +35,7 @@ bb_mmon: bb_mmon.o bb_lib.o
 bb_mnom: bb_mnom.o bb_lib.o
 
 bb_log: bb_log.o bb_lib.o
+bb_createlog: bb_createlog.o bb_lib.o
 
 bb_printlog: bb_printlog.o bb_lib.o
 
