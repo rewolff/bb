@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ $# -gt 1 ] ; then
+   tail='|tail -'$2
+fi
+while true; do
+   echo  "plot '< ./bb_printlog $1 $tail' w l"
+   sleep 1
+done | gnuplot

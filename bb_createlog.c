@@ -33,6 +33,10 @@ int main (int argc, char **argv)
   long long fsize;
 
   bb_init ();
+  if (argc <= 2) {
+     fprintf (stderr, "usage: bb_createlog var dt [numsampes]\n");
+     exit (1);
+  }
   varname = argv[1];
   dt = atoi (argv[2]);
   if (argc > 3) {
