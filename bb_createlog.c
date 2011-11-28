@@ -25,15 +25,12 @@ int main (int argc, char **argv)
   char *varname; 
   struct bb_var *vh;
   int tsize;
-  struct logfile_header *logptr;
-  void *vptr;
-  void *dataptr;
   enum bb_types type;
+  struct logfile_header *logptr;
   int dt; 
   char logfname[0x400];
   int logf;
   long long fsize;
-  struct stat statb;
 
   bb_init ();
   varname = argv[1];
@@ -44,7 +41,12 @@ int main (int argc, char **argv)
 
   // check existance of varname... 
   vh = bb_get_handle (varname);
-  if (!vh) fatal ("Variable %s doesn't exist", varname);
+  if (!vh) {
+     fprintf (stderr, "Variable %s doesn't exist", varname);
+     exit (1);
+  }
+  type = bb_get_type (varname);
+  tsize = bb_typesize (type);
 
   sprintf (logfname, "%s_log_%s", bb_get_base (), varname);
 
@@ -53,7 +55,10 @@ int main (int argc, char **argv)
     // Lets try to initialize it. 
     logf = open (logfname, O_RDWR | O_CREAT, 0666);
     fsize = sizeof(struct logfile_header) + numsamples * tsize;
-    ftruncate (logf, fsize);
+    if (ftruncate (logf, fsize) < 0) {
+       fprintf (stderr,"error truncating\n");
+       exit (1);
+    }
     //fstat (logf, &statb);
     logptr = mmap (NULL, fsize, PROT_READ | PROT_WRITE, MAP_SHARED, logf, 0);
     logptr->magic = BB_LOGFILE_MAGIC;

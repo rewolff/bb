@@ -1,7 +1,7 @@
 
 #define BB_LOGFILE_MAGIC (*((int *)"BBLF"))
 
-#define BB_LOGHDRVERSION 1
+#define BB_LOG_HDRVERSION 1
 
 struct logfile_header {
   int magic;

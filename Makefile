@@ -35,6 +35,7 @@ bb_mmon: bb_mmon.o bb_lib.o
 bb_mnom: bb_mnom.o bb_lib.o
 
 bb_log: bb_log.o bb_lib.o
+bb_createlog: bb_createlog.o bb_lib.o
 
 bb_printlog: bb_printlog.o bb_lib.o
 
