@@ -64,8 +64,9 @@ int main (int argc, char **argv)
 
   bb_init ();
 
+  if (argc != 2) usage (); 
   var = argv[1];
-  if (!var) usage (); 
+  //if (!var) usage (); 
  
   vartype = bb_get_type (var);
   p = bb_get_handle (var);
