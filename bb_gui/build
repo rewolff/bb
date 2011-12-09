@@ -1,4 +1,6 @@
+#!/bin/sh
 qmake -project 
+echo 'LIBS += ../bb_lib.o ' >> bb_gui.pro
 qmake
 make
 
