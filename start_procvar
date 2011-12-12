@@ -1,5 +1,9 @@
 #!/bin/sh
 configfile=$1
+if [ -z $configfile ] ; then
+  echo "Usage: $0 configfile"
+  exit 1
+fi
 while read var interval file string ; do
   if echo $var | grep -q '^#' ; then
     #echo comment ignored
