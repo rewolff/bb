@@ -1,7 +1,22 @@
 #!/bin/sh
 configfile=$1
 while read var interval file string ; do
-  echo var=$var string=$string
-
-
+  if echo $var | grep -q '^#' ; then
+    #echo comment ignored
+    echo -n ""
+  elif [ -z $var ] ; then
+    #echo empty line
+    echo -n ""
+  else
+    #echo var=$var string=$string
+    if echo $string | grep -q '^+' ; then
+      #echo before string=$string
+      string=`echo $string | sed -e 's/^+//'`
+      #echo after string=$string
+      plus="+";
+    else
+      plus="";
+    fi
+    ./bb_procvar $var $file $string $plus $interval &
+  fi
 done < $configfile
