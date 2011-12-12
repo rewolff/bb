@@ -7,6 +7,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <errno.h>
+
 
 
 #include "bb_lib.h"
@@ -21,60 +23,23 @@ void fatal (char *s)
 
 int main (int argc, char **argv)
 {
-  int numsamples = 0;
+  int numsamples;
   char *varname; 
-  struct bb_var *vh;
-  int tsize;
-  enum bb_types type;
-  struct logfile_header *logptr;
-  int dt; 
-  char logfname[0x400];
-  int logf;
-  long long fsize;
+  float dt; 
 
   bb_init ();
   if (argc <= 2) {
      fprintf (stderr, "usage: bb_createlog var dt [numsampes]\n");
      exit (1);
   }
+
   varname = argv[1];
-  dt = atoi (argv[2]);
+  dt = atof (argv[2]);
   if (argc > 3) {
     numsamples = atoi (argv[3]);
-  }
+  } else
+    numsamples = 0;
 
-  // check existance of varname... 
-  vh = bb_get_handle (varname);
-  if (!vh) {
-     fprintf (stderr, "Variable %s doesn't exist", varname);
-     exit (1);
-  }
-  type = bb_get_type (varname);
-  tsize = bb_typesize (type);
-
-  sprintf (logfname, "%s_logs/%s", bb_get_base (), varname);
-
-  //  logf = open (logfname, O_RDWR);
-  logf = open (logfname, O_RDWR | O_CREAT | O_EXCL, 0666);
-  if (logf >= 0) {
-    // Lets try to initialize it. 
-    fsize = sizeof(struct logfile_header) + numsamples * tsize;
-    if (ftruncate (logf, fsize) < 0) {
-       fprintf (stderr,"error truncating\n");
-       exit (1);
-    }
-    //fstat (logf, &statb);
-    logptr = mmap (NULL, fsize, PROT_READ | PROT_WRITE, MAP_SHARED, logf, 0);
-    logptr->magic = BB_LOGFILE_MAGIC;
-    logptr->datastart = sizeof (struct logfile_header);
-    logptr->hdrversion = BB_LOG_HDRVERSION;
-    logptr->dt = dt;
-    logptr->numsamples = numsamples;
-    logptr->curpos = 0;
-  } else {
-    perror ("creating log");
-    fprintf (stderr,"Log already exists?\n");
-    exit (1);
-  }
+  bb_createlog (varname, dt, numsamples);
   exit (0);
 }

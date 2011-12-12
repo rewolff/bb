@@ -7,8 +7,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "bb_lib.h"
+#include "bb_logs.h"
 
 
 char *typestrings [] = {
@@ -355,4 +357,115 @@ struct bb_var *bb_get_next_var(struct bb_var *p)
 char *bb_get_name(struct bb_var *p)
 {
   return p->name;
+}
+
+
+int bb_createlog (char *varname, float dt, int numsamples)
+{
+  struct bb_var *vh;
+  int tsize;
+  enum bb_types type;
+  struct logfile_header *logptr;
+  char logfname[0x400];
+  int logf;
+  long long fsize;
+  int t;
+  int tt, dtus;
+
+  // check existance of varname... 
+  vh = bb_get_handle (varname);
+  if (!vh) {
+     fprintf (stderr, "Variable %s doesn't exist", varname);
+     return -1;
+  }
+  type = bb_get_type (varname);
+  tsize = bb_typesize (type);
+
+  t = 0;
+  tt = 0;
+  do {
+    sprintf (logfname, "%s_logs/%s_log%d", bb_get_base (), varname, t++);
+    logf = open (logfname, O_RDWR | O_CREAT | O_EXCL, 0666);
+    if ((tt == 0) && (errno == ENOENT)) {
+      sprintf (logfname, "%s_logs", bb_get_base ());
+      mkdir (logfname, 0777);
+      tt = 1;
+      t = 0;
+      continue;
+    }
+    if ((logf < 0) && (errno != EEXIST)) {
+      fprintf (stderr, "can't create logfile\n");
+      return -1;
+    }
+  } while (logf < 0);
+
+  // Lets try to initialize it. 
+  fsize = sizeof(struct logfile_header) + numsamples * tsize;
+  if (ftruncate (logf, fsize) < 0) {
+    fprintf (stderr,"error truncating\n");
+    exit (1);
+  }
+  dtus = dt * 1000000;
+  //fstat (logf, &statb);
+  logptr = mmap (NULL, fsize, PROT_READ | PROT_WRITE, MAP_SHARED, logf, 0);
+  logptr->magic = BB_LOGFILE_MAGIC;
+  logptr->datastart = sizeof (struct logfile_header);
+  logptr->hdrversion = BB_LOG_HDRVERSION;
+  logptr->dt = dtus;
+  logptr->numsamples = numsamples;
+  logptr->curpos = 0;
+  return 0;
+}
+
+
+struct logfile_header *bb_openlog (char *varname, int lognum, int *logfp)
+{
+  struct bb_var *vh;
+  int tsize;
+  struct logfile_header *logptr;
+  void *vptr;
+  enum bb_types type;
+  char logfname[0x400];
+  int logf;
+  long long fsize;
+  struct stat statb;
+  
+  vh = bb_get_handle (varname); 
+  if (!vh) {
+    fprintf (stderr, "cant find variable %s\n", varname);
+    return NULL;
+  }
+  vptr = bb_get_ptr (varname);
+
+  type = bb_get_type (varname);
+  tsize = bb_typesize (type);
+  
+  sprintf (logfname, "%s_logs/%s_log%d", bb_get_base (), varname, lognum);
+
+  logf = open (logfname, O_RDWR);
+  if (logf < 0) {
+    fprintf (stderr, "No logfile for %s_%d\n", varname, lognum);
+    return (NULL);
+  }
+
+  fstat (logf, &statb);
+  fsize = statb.st_size;
+  logptr = mmap (NULL, fsize, PROT_READ | PROT_WRITE, MAP_SHARED, logf, 0);
+  if ((long) logptr == -1) {
+    perror ("mmap");
+    return (NULL);
+  }
+  //  dataptr = (void *)(logptr + 1);
+  if (logptr->magic != BB_LOGFILE_MAGIC) {
+    fprintf (stderr, "no magic");
+    return NULL;
+  }
+  if (logptr->hdrversion != BB_LOG_HDRVERSION) {
+    fprintf (stderr, "incompatible header");
+    return (NULL);
+  }
+  
+  *logfp = logf;
+  printf ("logptr = %p\n", logptr);
+  return logptr;
 }

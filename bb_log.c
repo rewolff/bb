@@ -24,50 +24,43 @@ int main (int argc, char **argv)
 {
   int numsamples = 0;
   char *varname; 
-  struct bb_var *vh;
   int tsize;
   struct logfile_header *logptr;
   void *vptr;
   void *dataptr;
   enum bb_types type;
   int dt; 
-  char logfname[0x400];
   int logf;
-  long long fsize;
-  struct stat statb;
+  int lognum;
   
-
   bb_init ();
 
   varname = argv[1];
 
-  vh = bb_get_handle (varname); 
-  vptr = bb_get_ptr (varname);
+  if (argc > 2) {
+    lognum = atoi (argv[2]);
+  } else {
+    lognum = 0;
+  }
+  printf ("btst1\n");
+
+  logptr = bb_openlog (varname, lognum, &logf);
+  if (!logptr) {
+    exit(1);
+  }
+  printf ("btst2 %p\n", logptr);
 
   type = bb_get_type (varname);
   tsize = bb_typesize (type);
-  
-  sprintf (logfname, "%s_log_%s", bb_get_base (), varname);
+  vptr = bb_get_ptr (varname);
+  printf ("btst3 vptr = %p (%s)\n", vptr, varname);
 
-  logf = open (logfname, O_RDWR);
-  if (logf < 0) {
-    fprintf (stderr, "No logfile for %s\n", varname);
-    exit (1);
-  }
-  // The logfile already exist!
-  fstat (logf, &statb);
-  fsize = statb.st_size;
-  logptr = mmap (NULL, fsize, PROT_READ | PROT_WRITE, MAP_SHARED, logf, 0);
-  if ((long) logptr == -1) {
-    perror ("mmap");
-    exit (1);
-  }
   dataptr = (void *)(logptr + 1);
-  if (logptr->magic != BB_LOGFILE_MAGIC) fatal ("no magic");
-  if (logptr->hdrversion != BB_LOG_HDRVERSION) fatal ("incompatible header");
+  printf ("btst4\n");
   dt = logptr->dt;
+  printf ("btst5\n");
   numsamples = logptr->numsamples;
-
+  printf ("btst6\n");
 
 #define CHAR_LOG_DATA ((char *)dataptr)
 #define CHAR_VAR_PTR  ((char *)vptr) 
@@ -75,8 +68,8 @@ int main (int argc, char **argv)
 #define FLOAT_LOG_DATA ((float *)dataptr)
 #define FLOAT_VAR_PTR  ((float *)vptr) 
 
-  //printf ("logptr: %p, dataptr: %p, vptr: %p\n", 
-  //	  logptr, dataptr, vptr);
+  printf ("logptr: %p, dataptr: %p, vptr: %p\n", 
+  	  logptr, dataptr, vptr);
   if (numsamples) {
     // cyclic logging. Use the memory mapped file... 
     while (1) {
@@ -89,19 +82,21 @@ int main (int argc, char **argv)
       case BB_BIT:   return 1;
 #endif
       }
-      logptr->curpos += 1;
-      if (logptr->curpos >= numsamples) 
+      if (logptr->curpos >= numsamples-1) 
 	logptr->curpos = 0;
-      sleep (dt);
+      else 
+	logptr->curpos += 1;
+      usleep (dt);
     }
   } else {
+    
     lseek (logf, 0, SEEK_END);
     while (1) {
       if (write (logf, vptr, tsize) < 0) {
         fprintf (stderr, "error writing to log\n");
         exit (1);
       }
-      sleep (dt);
+      usleep (dt);
     }
   }
 }

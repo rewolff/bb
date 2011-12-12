@@ -40,6 +40,8 @@ struct bb_var *bb_get_next_var(struct bb_var *p);
 char *bb_get_name(struct bb_var *p);
 
 char *bb_get_base (void);
+int bb_createlog (char *varname, float dt, int numsamples);
+struct logfile_header *bb_openlog (char *varname, int lognum, int *logfp);
 
 #ifdef  __cplusplus
 }
