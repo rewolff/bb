@@ -1,0 +1,7 @@
+#!/bin/sh
+configfile=$1
+while read var interval file string ; do
+  echo var=$var string=$string
+
+
+done < $configfile
