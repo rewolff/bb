@@ -52,12 +52,12 @@ int main (int argc, char **argv)
   type = bb_get_type (varname);
   tsize = bb_typesize (type);
 
-  sprintf (logfname, "%s_log_%s", bb_get_base (), varname);
+  sprintf (logfname, "%s_logs/%s", bb_get_base (), varname);
 
-  logf = open (logfname, O_RDWR);
-  if (logf < 0) {
+  //  logf = open (logfname, O_RDWR);
+  logf = open (logfname, O_RDWR | O_CREAT | O_EXCL, 0666);
+  if (logf >= 0) {
     // Lets try to initialize it. 
-    logf = open (logfname, O_RDWR | O_CREAT, 0666);
     fsize = sizeof(struct logfile_header) + numsamples * tsize;
     if (ftruncate (logf, fsize) < 0) {
        fprintf (stderr,"error truncating\n");
@@ -72,8 +72,8 @@ int main (int argc, char **argv)
     logptr->numsamples = numsamples;
     logptr->curpos = 0;
   } else {
-    close (logf);
-    fprintf (stderr,"Log already exists");
+    perror ("creating log");
+    fprintf (stderr,"Log already exists?\n");
     exit (1);
   }
   exit (0);
