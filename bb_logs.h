@@ -14,3 +14,9 @@ struct logfile_header {
 };
 
 
+
+struct logfile {
+  struct logfile_header *lfh;
+  int fd;
+};
+

@@ -32,12 +32,10 @@ int main (int argc, char **argv)
   vartype = bb_typestring_to_enum (vartypes);
 
   p = bb_get_handle (var);
-  if (p)
-  {
+  if (p) {
     printf("Variable %s already exists. Will not create again.\n", var);
     exit(-1);
   }
-
 
   bb_create_var (var, vartype);
   exit (0);

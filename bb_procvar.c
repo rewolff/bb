@@ -17,11 +17,12 @@ int main (int Argc, const char * Argv[])
 	const char * path;
 	char * var;
 	char * pipe_command;
+	char *fieldnp;
 	int usecs = 1000000;
 	int fd;
 	int deltas = 0;
 	int haveprevious = 0;
-	float lastvalue = 0;
+	double lastvalue = 0;
 	int fieldno = -1;
 	FILE * pipe_mnom;
 
@@ -29,7 +30,7 @@ int main (int Argc, const char * Argv[])
 	if (Argc < 4)
 	{
 		fprintf (stderr, "Usage: %s bb-name path var [+] [rate]\n"
-			" or: %s bb-name path #rank [+] [rate]\n",
+			" or: %s bb-name path var#rank [+] [rate]\n",
 			Myname, Myname);
 		exit (1);
 	}
@@ -43,6 +44,17 @@ int main (int Argc, const char * Argv[])
 		exit (2);
 	}
 	sprintf (var, "\n%s", *Argv);
+	fieldnp = strchr (var, '#');
+	if (fieldnp) {
+	  if (sscanf (fieldnp+1, "%d", &fieldno) != 1) {
+	    fprintf (stderr, "%s: bad fieldno in %s\n", *Argv, var);
+	    exit (2);
+	  }
+	  *fieldnp = 0;
+	} else {
+	  fieldno = -1;
+	}
+#if 0	  
 	if (var[1] == '#')
 	{
 		if (sscanf(var + 2, "%d", &fieldno) != 1)
@@ -52,6 +64,7 @@ int main (int Argc, const char * Argv[])
 			exit (2);
 		}
 	}
+#endif
 	Argv++;
 	if ((*Argv != NULL) && (strcmp (*Argv, "+") == 0))
 	{
@@ -66,7 +79,7 @@ int main (int Argc, const char * Argv[])
 	else
 		Argv++;
 	fd = open(path, O_RDONLY);
-	if (fd == EOF)
+	if (fd < 0)
 	{
 		fprintf (stderr, "%s: cannot open file \"%s\": %s\n",
 			Myname, path, strerror(errno));
@@ -92,7 +105,7 @@ int main (int Argc, const char * Argv[])
 		char readbuf[MAXBUF + 1];
 		int got;
 		char * where = readbuf;
-		float value;
+		double value;
 
 		if (lseek(fd, 0, SEEK_SET) != 0)
 		{
@@ -111,9 +124,33 @@ int main (int Argc, const char * Argv[])
 			exit (2);
 		}
 		readbuf[got] = '\0';
+
+		// printf ("searching for var: \"%s\"\n", var);
+		// printf ("readbuf = %p\n", readbuf);
+		if (strlen (var) > 1) {
+		  while (NULL != (where = strstr(where, var))) {
+		    where += strlen(var);
+		    if (! isalnum(*where))
+		      break;
+		  }
+		  if (where == NULL)
+		    {
+		      if (var[0] == '\n') {
+			var [0] = ' ';
+			continue;
+		      }
+		      fprintf (stderr, "%s: cannot find var \"%s\" "
+			       "in %s\n", Myname, var + 1, path);
+		      exit (2);
+		    }
+		  if (! isspace(*where))
+		    where++;	/* skip separator */
+		} else {
+		  where = readbuf;
+		}
+		// printf ("found var: %p %.20s\n", where, where);
 		if (fieldno >= 0)
 		{
-			where = readbuf;
 			char field[sizeof(readbuf)];
 			int currentfield;
 			for (currentfield = 0; currentfield < fieldno;
@@ -131,24 +168,9 @@ int main (int Argc, const char * Argv[])
 				where += fieldlen;
 			}
 		}
-		else
-		{
-			while (NULL != (where = strstr(where, var)))
-			{
-				where += strlen(var);
-				if (! isalnum(*where))
-					break;
-			}
-			if (where == NULL)
-			{
-				fprintf (stderr, "%s: cannot find var \"%s\" "
-					"in %s\n", Myname, var + 1, path);
-				exit (2);
-			}
-			if (! isspace(*where))
-				where++;	/* skip separator */
-		}
-		if (sscanf(where, "%f", &value) != 1)
+		//printf ("found fieldno: %p >%.20s<\n", where, where);
+
+		if (sscanf(where, "%lf", &value) != 1)
 		{
 			fprintf (stderr, "%s: cannot parse value \"%10s...\"\n",
 				Myname, where);

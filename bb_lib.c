@@ -131,8 +131,7 @@ int bb_open_shm (int mode)
 
 void bb_init ()
 {
-
-  char *fname; 
+  //char *fname; 
   FILE *fp; 
   char buf[0x400];
   struct bb_var *t;
@@ -141,7 +140,7 @@ void bb_init ()
   struct stat statb;
  
   bb_init_base ();
-  fname = malloc (0x400);
+  //fname = malloc (0x400);
 
   fp = bb_open_names ("r");
   while (fgets (buf, 0x400,  fp)) {
@@ -418,27 +417,29 @@ int bb_createlog (char *varname, float dt, int numsamples)
 }
 
 
-struct logfile_header *bb_openlog (char *varname, int lognum, int *logfp)
+
+struct logfile *bb_openlog (char *varname, int lognum, int *logfp)
 {
   struct bb_var *vh;
-  int tsize;
+  // int tsize;
   struct logfile_header *logptr;
-  void *vptr;
-  enum bb_types type;
+  // void *vptr;
+  // enum bb_types type;
   char logfname[0x400];
   int logf;
   long long fsize;
   struct stat statb;
-  
+  struct logfile *lf;
+
   vh = bb_get_handle (varname); 
   if (!vh) {
     fprintf (stderr, "cant find variable %s\n", varname);
     return NULL;
   }
-  vptr = bb_get_ptr (varname);
-
-  type = bb_get_type (varname);
-  tsize = bb_typesize (type);
+  // vptr = bb_get_ptr (varname);
+  
+  // type = bb_get_type (varname);
+  // tsize = bb_typesize (type);
   
   sprintf (logfname, "%s_logs/%s_log%d", bb_get_base (), varname, lognum);
 
@@ -464,8 +465,10 @@ struct logfile_header *bb_openlog (char *varname, int lognum, int *logfp)
     fprintf (stderr, "incompatible header");
     return (NULL);
   }
-  
-  *logfp = logf;
-  printf ("logptr = %p\n", logptr);
-  return logptr;
+
+  lf = malloc (sizeof (struct logfile));
+
+  lf->lfh = logptr;
+  lf->fd  = logf;
+  return lf;
 }
