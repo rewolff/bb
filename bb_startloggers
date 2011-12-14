@@ -1,0 +1,9 @@
+#!/bin/sh
+# XXX check if BB_HOME is set.
+cd $HOME/.bb_logs
+ls *_log* | while read fname ; do 
+   var=`echo $fname | sed -e 's/_log.*//'`
+   lognr=`echo $fname | sed -e 's/.*_log//'`
+   echo var = $var  lognr = $lognr
+   bb_log $var $lognr &
+done 

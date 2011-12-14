@@ -21,6 +21,10 @@ while read var interval file string ; do
     else
       plus="";
     fi
-    ./bb_procvar $var $file $string $plus $interval &
+    if ! bb_print $var > /dev/null 2>&1 ; then
+       echo creating $var
+       bb_create $var float
+    fi
+    bb_procvar $var $file $string $plus $interval &
   fi
 done < $configfile

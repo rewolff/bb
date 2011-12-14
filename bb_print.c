@@ -25,8 +25,12 @@ int main (int argc, char **argv)
   var = argv[1];
   if (!var) usage (); 
  
-  vartype = bb_get_type (var);
   p = bb_get_handle (var);
+  if (!p) {
+     fprintf (stderr, "Cant find var %s\n", var);
+     exit (1);
+  }
+  vartype = bb_get_type (var);
 
   switch (vartype) {
   case BB_BYTE: 

@@ -32,6 +32,7 @@ int main (int argc, char **argv)
   int logf;
   long long fsize;
   struct stat statb;
+  int lognr;
   
   bb_init ();
 
@@ -40,11 +41,17 @@ int main (int argc, char **argv)
     exit (1);
   }
   varname = argv[1];
+ 
+  if (argc > 2) {
+    lognr = atoi (argv[2]);
+  } else {
+    lognr = 0;
+  }
 
   type = bb_get_type (varname);
   tsize = bb_typesize (type);
   
-  sprintf (logfname, "%s_log_%s", bb_get_base (), varname);
+  sprintf (logfname, "%s_logs/%s_log%d", bb_get_base (), varname, lognr);
 
   logf = open (logfname, O_RDONLY);
   if (logf < 0) {
