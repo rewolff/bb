@@ -23,14 +23,15 @@ int main (int Argc, const char * Argv[])
 	int deltas = 0;
 	int haveprevious = 0;
 	double lastvalue = 0;
+	double interval = 1.0;
 	int fieldno = -1;
 	FILE * pipe_mnom;
 
 	Myname = *Argv++;
 	if (Argc < 4)
 	{
-		fprintf (stderr, "Usage: %s bb-name path var [+] [rate]\n"
-			" or: %s bb-name path var#rank [+] [rate]\n",
+		fprintf (stderr, "Usage: %s bb-name path var [+] [interval]\n"
+			" or: %s bb-name path var#rank [+] [interval]\n",
 			Myname, Myname);
 		exit (1);
 	}
@@ -71,13 +72,15 @@ int main (int Argc, const char * Argv[])
 		deltas = 1;
 		Argv++;
 	}
-	if ((*Argv != NULL) && (sscanf(*Argv, "%d", &usecs) != 1))
+	if ((*Argv != NULL) && (sscanf(*Argv, "%lf", &interval) != 1))
 	{
-		fprintf (stderr, "%s: Bad rate \"%s\"\n", Myname, *Argv);
+		fprintf (stderr, "%s: Bad interval \"%s\"\n", Myname, *Argv);
 		exit (1);
 	}
 	else
-		Argv++;
+	{
+		usecs = (interval * 1000000);
+	}
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 	{
@@ -123,7 +126,7 @@ int main (int Argc, const char * Argv[])
 			fprintf (stderr, "%s: read failed.\n", Myname);
 			exit (2);
 		}
-		readbuf[got] = '\0';
+		readbuf[got + 1] = '\0';
 
 		// printf ("searching for var: \"%s\"\n", var);
 		// printf ("readbuf = %p\n", readbuf);
