@@ -136,7 +136,7 @@ void bb_init ()
   char buf[0x400];
   struct bb_var *t;
   char varname [0x100], vartypes[0x100];
-  int offset, fd;
+  int offset, fd, boffset;
   struct stat statb;
  
   bb_init_base ();
@@ -152,8 +152,10 @@ void bb_init ()
     t->type  = bb_typestring_to_enum (vartypes); 
     t->next = varlist; 
     varlist = t;
-    if (firstfree < offset + bb_typesize (t->type))
-      firstfree = offset + bb_typesize (t->type);
+    if (t->type == BB_BIT) boffset = offset/8;
+    else                   boffset = offset; 
+    if (firstfree < boffset + bb_typesize (t->type))
+      firstfree = boffset + bb_typesize (t->type);
   }
   fclose (fp);
 
