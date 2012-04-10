@@ -22,3 +22,9 @@ bb_createlog
 bb_filter
 bb_dio
 bb_procvar
+rv
+bb_gui/Makefile
+bb_gui/bb_gui
+bb_gui/bb_gui.pro
+bb_gui/moc_bb_checkbox.cpp
+bb_gui/moc_bb_mon.cpp
