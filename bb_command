@@ -1,0 +1,7 @@
+#!/bin/sh
+var=$1
+shift
+command=$*
+bb_mon $var  | while read v ; do
+  $command $v
+done
