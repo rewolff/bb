@@ -30,6 +30,10 @@ int main (int argc, char **argv)
   if (!vartypes) usage (); 
 
   vartype = bb_typestring_to_enum (vartypes);
+  if (vartype == BB_INVALID) {
+     fprintf (stderr, "Invalid typstring. \n");
+     exit (0);
+  }
 
   p = bb_get_handle (var);
   if (p) {
