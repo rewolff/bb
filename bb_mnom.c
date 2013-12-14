@@ -8,13 +8,11 @@
 #include "bb_lib.h"
 
 
-
 void usage (void)
 {
   fprintf (stderr, "usage error.\n");
   exit (1);
 }
-
 
 
 void nom_varlist (int nvars, int *vartypes, struct bb_var *vars[])
@@ -51,13 +49,15 @@ void nom_varlist (int nvars, int *vartypes, struct bb_var *vars[])
 
 int main (int argc, char **argv)
 {
-  struct bb_var *vars[100];
-  int vartypes[100];
+  struct bb_var **vars;
+  int *vartypes;
   char *var;
   int i, nvars;
 
   bb_init ();
 
+  vartypes = malloc (argc * sizeof (int));
+  vars     = malloc (argc * sizeof (struct bb_var *));
   for (i=1;i<argc;i++) {
     var = argv[i];
     vartypes[i-1] = bb_get_type (var);
