@@ -18,6 +18,8 @@ LDLIBS=bb_lib.o
 bb_ftdi: bb_ftdi.o
 	$(CC) $< -lftdi -lusb -o $@
 
+install:
+	sudo cp $(EXE) $(SCRIPTS) /usr/local/bin
 
 clean: 
 	rm -f *.o *~ $(EXE)
