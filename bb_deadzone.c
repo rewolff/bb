@@ -43,6 +43,9 @@ int main (int argc, char **argv)
 
   //printf ("dz =%f\n", dz);
 
+
+  // TODO: hanlde case when var2 isn't a float. 
+
   while (1) {
     //printf ("%f %f %f %f\n",  bb_get_float (p1), out, last, fabs (out - bb_get_float (p1)));
     if (fabs (out - bb_get_float (p1)) > dz) {

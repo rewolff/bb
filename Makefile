@@ -8,7 +8,7 @@ EXE=bb_create bb_print bb_set bb_mon bb_nom bb_parport bb_ftdi \
 	bb_xor bb_mon_ping bb_list bb_kitt bb_alarm bb_mmon \
 	bb_mnom bb_log bb_printlog bb_remote bb_procvar \
 	bb_createlog bb_filter bb_dio rv bb_deadzone
-SCRIPTS=bb_df bb_sysload set_var_to_exitstatus
+SCRIPTS=bb_command bb_df bb_sysload set_var_to_exitstatus
 
 all:$(EXE)
 
