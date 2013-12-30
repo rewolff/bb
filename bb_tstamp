@@ -1,0 +1,5 @@
+#!/bin/sh
+bb_mon $* | while read v ; do
+    echo `date` $v
+done   
+
