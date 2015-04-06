@@ -7,7 +7,7 @@ bb = bb ()
 
 bbv = bb.var (sys.argv[1])
 
-print bbv.val ()
+bbv.set (int (sys.argv[2]))
 
 sys.exit ()
 

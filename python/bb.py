@@ -14,6 +14,9 @@ class bb_var:
         vall = struct.unpack('I', self.shm[self.offset:self.offset+4])
         return vall[0]
 
+    def set(self, newval):
+        struct.pack_into ('I', self.shm, self.offset, newval)
+
 
 
 class bb:
