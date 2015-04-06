@@ -14,6 +14,7 @@
 
 #include "bb_lib.h"
 
+
 int server_socket (int port)
 {
   int sock;
@@ -47,6 +48,7 @@ int server_socket (int port)
   }
   return sock;
 }
+
 
 static void sigchld_handler(int num)
 {
@@ -94,41 +96,36 @@ static void sigchld_handler(int num)
   sigprocmask(SIG_UNBLOCK, &set, &oldset);
 }
 
+
+
 #define INTERVAL 100000
 #define PINGTIME 30
+
+#define MAX_VARS 100
 
 int main (int argc, char **argv)
 {
   int port;
   int sockfd;
   socklen_t sinlen;
+  struct sockaddr_in sin;
   int net; 
+
   int i, nv, rv;
   int flags, pid;
-  char *peername, *var;
-  struct sockaddr_in sin;
-  struct bb_var *vars[100];
-  // int vartypes[100];
-  int oldvals[100];
-  char *pins[100];
-  char buf[0x100];
+  char *peername;
+
+  struct bb_var *vars[MAX_VARS];
+  char *names[MAX_VARS];
+  int oldvals[MAX_VARS];
+
+  char buf[0x100], *p;
   int interval = INTERVAL;
   int newv, pingtime;
+  char cmd [0x20], val[0x20];
 
   bb_init ();
   port = atoi (argv[1]);
-
-  for (i = 2, nv = 0;i<argc;i++,nv++) {
-    var = argv[i];
-    //    vartypes[nv] = bb_get_type (var);
-    vars[nv]     = bb_get_handle (var);
-    oldvals[nv] = -1;
-    if (vars[nv] == NULL) {
-      printf("Variable '%s' not found... Exiting.\n                       ", var);
-      exit(-1);
-    }
-    pins[nv] = strdup (argv[i++]);
-  }
 
   signal(SIGCHLD, sigchld_handler);
 
@@ -156,7 +153,7 @@ int main (int argc, char **argv)
       // serve the socket. 
       flags = fcntl (net, F_GETFL, NULL);
       fcntl (net, F_SETFL, flags | O_NONBLOCK);
-
+      nv = 0;
       while ( 1) {
 	rv = read (net, buf, 256);
 	if (rv == 0) break;
@@ -170,6 +167,25 @@ int main (int argc, char **argv)
 	if (rv > 0) {
 	  buf[rv] = 0;
 	  printf ("got something from the client: %s", buf);
+
+	  for (p=buf;p && *p;) {
+	    sscanf (p, "%s %s", cmd, val);
+	    if (strcmp (cmd, "ping") == 0) {
+	      printf ("got a ping. Good.\n");
+	    } else if (strcmp (cmd, "uid") == 0) {
+	      printf ("XXX todo: dosomething with the uid.\n");
+	    } else if (strcmp (cmd, "mon") == 0) {
+	      names[nv] = strdup (val);
+	      vars[nv] = bb_get_handle (val);
+	      if (vars[nv] == NULL) {
+		printf ("Variable %s not found! config error!!!\n", val);
+	      } else {
+		oldvals[nv] = -1;
+		nv++;
+	      }
+	    }
+	    p = strchr (p, '\n')+1;
+	  }
 	}
 	if (pingtime <= 0) {
 	  pingtime = PINGTIME * 1000000 / interval;
@@ -185,8 +201,8 @@ int main (int argc, char **argv)
 	for (i=0;i<nv;i++) {
 	  newv = bb_get_int(vars[i]);
 	  if (newv != oldvals[i]) {
-	    sprintf (buf, "pin val %s %d\n", 
-		     pins[i], newv);
+	    sprintf (buf, "output %s %d\n", 
+		     names[i], newv);
 	    printf ("Sending: %s", buf); 
 	    if (write(net, buf, strlen (buf)) < 0) {
 	      perror ("write net");
