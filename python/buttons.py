@@ -36,7 +36,7 @@ class bbVarButton:
 class myapp(Frame):
   
     def __init__(self, parent):
-        Frame.__init__(self, parent, background="white")   
+        Frame.__init__(self, parent)   
         self.parent = parent
         self.bb = bb()
         self.initUI()
