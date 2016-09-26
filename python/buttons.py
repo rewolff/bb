@@ -28,8 +28,7 @@ class bbIntVar (IntVar):
 class bbVarButton:
     def __init__ (self, parent, bb, bbname):
         self.var = bbIntVar (parent, bb, bbname)
-        self.but = Checkbutton(parent, text = bbname, variable = self.var, \
-                               height=1, width = 10)
+        self.but = Checkbutton(parent, text = bbname, variable = self.var)
         self.but.pack ()
 
 
@@ -45,7 +44,8 @@ class myapp(Frame):
         self.buttons = []
         for s in sys.argv[1:]:
             self.buttons.append (bbVarButton (self.parent, self.bb, s))
-        
+        self.quitb = Button(self.parent, text = "quit", command = self.quit )
+        self.quitb.pack ()
         self.parent.title("Buttons")
         self.pack(fill=BOTH, expand=1)
     
